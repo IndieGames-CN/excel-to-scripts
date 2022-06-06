@@ -1,0 +1,23 @@
+{
+  "name": "excel-exporter",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "excel",
+    "json",
+    "cs",
+    "lua"
+  ],
+  "author": "veinin",
+  "license": "ISC",
+  "dependencies": {
+    "node-xlsx": "^0.21.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.15.0"
+  }
+}
