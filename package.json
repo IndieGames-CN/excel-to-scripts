@@ -6,6 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "bin": {
+    "excel-exporter": "./bin/index.js"
+  },
   "keywords": [
     "excel",
     "json",
@@ -15,7 +18,8 @@
   "author": "veinin",
   "license": "ISC",
   "dependencies": {
-    "node-xlsx": "^0.21.0"
+    "node-xlsx": "^0.21.0",
+    "yargs": "^17.5.1"
   },
   "devDependencies": {
     "eslint": "^8.15.0"
