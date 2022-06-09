@@ -1,10 +1,12 @@
-var reader = require("./reader");
+const fs = require("fs");
+const path = require("path")
+const reader = require("./reader");
 const { parseType, isSkip, FIELD_TYPES } = require("./types");
 
 const EXPORT_TYPE = {
-  JSON: 1,
-  LUA: 2,
-  CS: 3,
+  JSON: 'json',
+  LUA: 'lua',
+  CS: 'cs',
 };
 
 exporters = {
@@ -14,6 +16,7 @@ exporters = {
 };
 
 function exportSheets(type, srcePath, destPath) {
+  console.log(type, srcePath, destPath);
   var xlsx = reader.readXlsxContent(srcePath);
   xlsx.sheets.forEach((sheet) => {
     exportSheet(type, sheet, destPath);
@@ -38,7 +41,7 @@ function exportSheet(type, sheet, destPath) {
   writeFileds(buffer, field_types, descs, columnLen)
   writeFileds(buffer, field_types, names, columnLen)
 
-  for (var i = 3; i < sheet.data.length; i++) {
+  for (var i = 4; i < sheet.data.length; i++) {
     var columns = sheet.data[i];
 
     buffer.push("\t{");
@@ -57,12 +60,30 @@ function exportSheet(type, sheet, destPath) {
       buffer.push("},\n");
     }
     else {
-      buffer.push("}\n")
+      buffer.push("}")
     }
   }
 
   buffer.push("\n}");
-  console.log(buffer.join(''));
+
+  if (!fs.existsSync(destPath)) {
+    fs.mkdir(destPath, err => {
+      if (err) {
+        console.log(err);
+        return false;
+      }
+    });
+  }
+
+  var content = buffer.join('');
+  fs.writeFile(path.join(destPath, sheet.name + exporter.fileSuffix), content, err => {
+    if (err) {
+      console.error(err);
+      return false
+    } else {
+      return true;
+    }
+  });
 }
 
 function writeFileds(buffer, types, fields, length) {

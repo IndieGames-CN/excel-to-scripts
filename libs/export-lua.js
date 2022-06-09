@@ -87,5 +87,6 @@ function formatValue(types, value) {
 }
 
 module.exports = {
+    fileSuffix: '.lua',
     formatValue: formatValue,
 }
