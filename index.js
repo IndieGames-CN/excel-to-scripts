@@ -6,9 +6,9 @@ var srcePath = "./data/普通工作表示例.xlsx";
 var destPath = "./data/export"
 var types = require("./libs/types")
 
-exporters.exportSheets(exporters.EXPORT_TYPE.JSON, srcePath, destPath)
+exporters.exportSheets(exporters.EXPORT_TYPE.LUA, srcePath, destPath)
 
-// var pattern = /^\[((\w|\[|\]|)+)\]$/;
+// var pattern = /^\[(.+)\]$/;
 
 // var result = pattern.exec("[[int]]")
 // console.log(result[0], result[1])
@@ -20,6 +20,9 @@ exporters.exportSheets(exporters.EXPORT_TYPE.JSON, srcePath, destPath)
 // console.log(result[0], result[1])
 
 // var result = pattern.exec("[float]")
+// console.log(result[0], result[1])
+
+// var result = pattern.exec("[{id=int,num=int}]")
 // console.log(result[0], result[1])
 
 

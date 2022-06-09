@@ -1,4 +1,5 @@
 const FIELD_TYPES = {
+  SKIP: -1,
   ERROR: 0,
   BOOLEAN: 1,
   INTEGER: 2,
@@ -21,7 +22,7 @@ const BASE_TYPE_DICT = {
 
 const collectionTypeParse = {
   [FIELD_TYPES.ARRAY]: function (t) {
-    var pattern = /^\[((\w|\[|\]|)+)\]$/;
+    var pattern = /^\[(.+)\]$/;
     var result = pattern.exec(t);
     if (result == null) {
       return { type: FIELD_TYPES.ERROR };
@@ -65,6 +66,10 @@ const collectionTypeParse = {
 };
 
 function parseType(t) {
+  if (t.startsWith("#")) {
+    return { type: FIELD_TYPES.SKIP };
+  }
+
   if (BASE_TYPE_DICT[t]) {
     return { type: BASE_TYPE_DICT[t] };
   }
@@ -76,6 +81,10 @@ function parseType(t) {
   return collectionTypeParse[ctype](t);
 }
 
+function isSkip(type) {
+  return type == FIELD_TYPES.SKIP || type == FIELD_TYPES.ERROR;
+}
+
 module.exports = Object.freeze({
   MIN_ROWS: 5,
   MIN_CONST_ROWS: 2,
@@ -84,5 +93,6 @@ module.exports = Object.freeze({
   FIELD_TYPES: FIELD_TYPES,
   FIELD_TYPE_DICT: BASE_TYPE_DICT,
 
+  isSkip: isSkip,
   parseType: parseType,
 });
