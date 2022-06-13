@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path")
 const reader = require("./reader");
-const { parseType, isSkip, FIELD_TYPES } = require("./types");
+const parser = require("./parser");
 
 const EXPORT_TYPE = {
   JSON: 'json',
@@ -10,8 +10,8 @@ const EXPORT_TYPE = {
 };
 
 exporters = {
-  [EXPORT_TYPE.JSON]: require("./export-cs"),
-  [EXPORT_TYPE.LUA]: require("./export-lua"),
+  [EXPORT_TYPE.JSON]: require("./export-script"),
+  [EXPORT_TYPE.LUA]: require("./export-script"),
   [EXPORT_TYPE.CS]: require("./export-cs"),
 };
 
@@ -24,7 +24,13 @@ function exportSheets(type, srcePath, destPath) {
 
 function exportSheet(type, sheet, destPath) {
   var exporter = exporters[type];
-  var content = getSheetContent(exporter, sheet);
+  var fileData = null;
+
+  if (sheet.isConst) {
+    fileData = exporter.generateConsts(sheet, type)
+  } else {
+    fileData = exporter.generate(sheet, type);
+  }
 
   if (!fs.existsSync(destPath)) {
     fs.mkdir(destPath, err => {
@@ -35,8 +41,8 @@ function exportSheet(type, sheet, destPath) {
     });
   }
 
-  var exportPath = path.join(destPath, sheet.name + exporter.fileSuffix);
-  fs.writeFile(exportPath, content, err => {
+  var exportPath = path.join(destPath, fileData.fileName);
+  fs.writeFile(exportPath, fileData.fileContent, err => {
     if (err) {
       console.error(err);
       return false
@@ -44,68 +50,6 @@ function exportSheet(type, sheet, destPath) {
       return true;
     }
   });
-}
-
-function getSheetContent(exporter, sheet) {
-  var descs = sheet.data[0];
-  var names = sheet.data[1];
-  var types = parseTypes(sheet.data[2]);
-
-  var columnLen = types.length;
-
-  const buffer = []
-  buffer.push("return {\n");
-  writeFileds(buffer, types, descs)
-  writeFileds(buffer, types, names)
-
-  for (var i = 4; i < sheet.data.length; i++) {
-    var columns = sheet.data[i];
-
-    buffer.push("\t{");
-    for (var j = 0; j < columnLen; j++) {
-      var columnType = types[j];
-      var columnValue = columns[j];
-      if (isSkip(columnType.type)) {
-        continue;
-      }
-      buffer.push(exporter.formatValue(columnType, columnValue))
-      if (j + 1 < columnLen) {
-        buffer.push(", ");
-      }
-    }
-    if (i + 1 < sheet.data.length) {
-      buffer.push("},\n");
-    }
-    else {
-      buffer.push("}")
-    }
-  }
-  buffer.push("\n}");
-
-  return buffer.join('');
-}
-
-function parseTypes(types) {
-  var field_types = [];
-  for (var i = 0; i < types.length; i++) {
-    field_types.push(parseType(types[i]));
-  }
-  return field_types
-}
-
-function writeFileds(buffer, types, fields) {
-  buffer.push("\t{");
-  for (var i = 0; i < fields.length; i++) {
-    var columnType = types[i];
-    if (isSkip(columnType.type)) {
-      continue;
-    }
-    buffer.push("\"" + fields[i] + "\"")
-    if (i + 1 < fields.length) {
-      buffer.push(", ");
-    }
-  }
-  buffer.push("},\n");
 }
 
 module.exports = {

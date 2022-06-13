@@ -2,9 +2,9 @@
 
 // node ./bin/index.js -i ./data -o ./output -f 普通工作表示例.xlsx
 
-const fs = require("fs");
 const path = require("path");
 const yargs = require('yargs');
+const cmder = require("../libs/cmder")
 const exporters = require("../libs/exporters")
 
 var argv = yargs
@@ -40,10 +40,8 @@ var argv = yargs
     .alias('h', 'help')
     .argv;
 
-console.log(argv)
-
 if (argv.f == 'all') {
-    
+    cmder.start(argv.i, argv.o)
 } else {
     exporters.exportSheets(argv.t, path.join(argv.i, argv.f), argv.o);
 }

@@ -24,6 +24,7 @@ function readXlsxContent(filePath) {
   const workSheets = xlsx.parse(filePath);
   workSheets.forEach((sheet) => {
     if (!sheet.name.startsWith("#")) {
+      sheet.isConst = sheet.name.toLowerCase().indexOf("const") != -1
       fileSheets.sheets.push(sheet);
     }
   });

@@ -1,12 +1,9 @@
-// import xlsx from 'node-xlsx'
-var reader = require("./libs/reader")
 var exporters = require("./libs/exporters")
 
-var srcePath = "./data/普通工作表示例.xlsx";
-var destPath = "./data/export"
-var types = require("./libs/types")
+var srcePath = "./data/常量工作表示例.xlsx";
+var destPath = "./output"
 
-exporters.exportSheets(exporters.EXPORT_TYPE.LUA, srcePath, destPath)
+exporters.exportSheets(exporters.EXPORT_TYPE.JSON, srcePath, destPath)
 
 // var pattern = /^\[(.+)\]$/;
 
