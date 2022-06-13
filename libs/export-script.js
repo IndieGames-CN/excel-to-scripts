@@ -13,7 +13,7 @@ fmts = {
         fileHead: "return ",
         keyWrap: { left: "", right: "" },
         arrayBrace: { left: "{", right: "}" },
-        objectBrace: { left: "{", equal: "=", right: "}" },
+        objectBrace: { left: "{", equal: " = ", right: "}" },
     },
 };
 
@@ -109,10 +109,11 @@ function generateConsts(sheet, type) {
         }
 
         buffer.push("\t" + fmt.keyWrap.left + name + fmt.keyWrap.right)
-        buffer.push(" " + fmt.objectBrace.equal + " " + value);
+        buffer.push(fmt.objectBrace.equal + value);
         buffer.push(",\n");
     }
-    buffer.push(fmt.objectBrace.right);
+    buffer.pop();
+    buffer.push("\n" + fmt.objectBrace.right);
 
     return {
         fileName: sheet.name + fmt.fileSuffix,
