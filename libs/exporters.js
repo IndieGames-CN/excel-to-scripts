@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path")
 const reader = require("./reader");
-const parser = require("./parser");
+const clc = require("cli-color");
 
 const EXPORT_TYPE = {
   JSON: 'json',
@@ -15,7 +15,14 @@ exporters = {
   [EXPORT_TYPE.CS]: require("./export-cs"),
 };
 
+function exportAll(type, xlsxList, srcePath, destPath) {
+  xlsxList.forEach(xlsx => {
+    exportSheets(type, path.join(srcePath, xlsx), destPath)
+  })
+}
+
 function exportSheets(type, srcePath, destPath) {
+  console.log(clc.green('- Export: ' + srcePath))
   var xlsx = reader.readXlsxContent(srcePath);
   xlsx.sheets.forEach((sheet) => {
     exportSheet(type, sheet, destPath);
@@ -23,6 +30,8 @@ function exportSheets(type, srcePath, destPath) {
 }
 
 function exportSheet(type, sheet, destPath) {
+  console.log(clc.green('- Export: ' + sheet.name))
+
   var exporter = exporters[type];
   var fileData = null;
 
@@ -33,18 +42,13 @@ function exportSheet(type, sheet, destPath) {
   }
 
   if (!fs.existsSync(destPath)) {
-    fs.mkdir(destPath, err => {
-      if (err) {
-        console.log(err);
-        return false;
-      }
-    });
+    fs.mkdirSync(destPath, {recursive: true});
   }
 
   var exportPath = path.join(destPath, fileData.fileName);
   fs.writeFile(exportPath, fileData.fileContent, err => {
     if (err) {
-      console.error(err);
+      console.error(clc.red(err));
       return false
     } else {
       return true;
@@ -54,5 +58,6 @@ function exportSheet(type, sheet, destPath) {
 
 module.exports = {
   EXPORT_TYPE: EXPORT_TYPE,
+  exportAll: exportAll,
   exportSheets: exportSheets,
 }

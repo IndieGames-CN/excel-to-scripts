@@ -2,12 +2,13 @@
   "name": "excel-exporter",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "pkgwin": "pkg . -t node16-win --out-path=dist/win",
+    "test": "node index.js"
   },
   "bin": {
-    "excel-exporter": "./bin/index.js"
+    "excel-exporter": "./app.js"
   },
   "keywords": [
     "excel",
@@ -18,7 +19,10 @@
   "author": "veinin",
   "license": "ISC",
   "dependencies": {
+    "cli-color": "^2.0.2",
+    "inquirer": "^8.2.4",
     "node-xlsx": "^0.21.0",
+    "pkg": "^5.7.0",
     "yargs": "^17.5.1"
   },
   "devDependencies": {

@@ -1,7 +1,5 @@
 #!/usr/bin/env node
 
-// node ./bin/index.js -i ./data -o ./output -f 普通工作表示例.xlsx
-
 const path = require("path");
 const yargs = require('yargs');
 const cmder = require("../libs/cmder")
@@ -34,13 +32,20 @@ var argv = yargs
         describe: 'file name',
         type: 'string'
     })
+    .option('c', {
+        alias: 'cmd',
+        demand: true,
+        default: true,
+        describe: 'comand line mode',
+        type: 'bool'
+    })
     .usage('Usage: excel-exporter [options]')
     .example('excel-exporter -i ./data -o ./export -t lua Test.xlsx')
     .help('h')
     .alias('h', 'help')
     .argv;
 
-if (argv.f == 'all') {
+if (argv.cmd) {
     cmder.start(argv.i, argv.o)
 } else {
     exporters.exportSheets(argv.t, path.join(argv.i, argv.f), argv.o);

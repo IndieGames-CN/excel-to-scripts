@@ -5,10 +5,14 @@ const xlsx = require("node-xlsx");
 function readXlsxFileList(dirName) {
   var fileList = [];
 
+  if (!fs.existsSync(dirName)) {
+    return fileList;
+  }
+
   files = fs.readdirSync(dirName);
   files.forEach((file) => {
     if (path.extname(file) == ".xlsx" && file.slice(0, 2) != "~$") {
-      fileList.push(path.join(dirName, file));
+      fileList.push(file);
     }
   });
 
@@ -20,6 +24,10 @@ function readXlsxContent(filePath) {
     file: path.basename(filePath),
     sheets: [],
   };
+
+  if (!fs.existsSync(filePath)) {
+    return fileSheets;
+  }
 
   const workSheets = xlsx.parse(filePath);
   workSheets.forEach((sheet) => {
