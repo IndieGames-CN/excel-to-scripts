@@ -35,7 +35,7 @@ var argv = yargs
     .option('c', {
         alias: 'cmd',
         demand: true,
-        default: true,
+        default: false,
         describe: 'comand line mode',
         type: 'bool'
     })

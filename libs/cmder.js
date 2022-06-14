@@ -7,6 +7,7 @@ var srcDir = null
 var outDir = null
 var xlsxList = null
 var exportType = null
+var exportOption = "Export all"
 
 function showExportType() {
     inquirer.prompt({
@@ -33,7 +34,7 @@ function showExportList() {
                 type: 'rawlist',
                 name: 'option',
                 message: 'Select the export file:',
-                default: 'Export all',
+                default: exportOption,
                 choices: choices,
                 pageSize: 30,
             },
@@ -51,7 +52,8 @@ function showExportList() {
                     exporters.exportSheets(exportType, path.join(srcDir, option), outDir);
                     break;
             }
-
+            
+            exportOption = option;
             showExportList();
         });
 }

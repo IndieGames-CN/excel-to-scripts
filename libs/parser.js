@@ -6,8 +6,9 @@ const FIELD_TYPES = {
   FLOAT: 3,
   STRING: 4,
   ARRAY: 5,
-  MAP: 6,
-  SUB_TABLE: 7,
+  MULTI_LINE_ARRAY: 6,
+  MAP: 7,
+  SUB_TABLE: 8,
 };
 
 const BASE_TYPE_DICT = {
@@ -16,9 +17,21 @@ const BASE_TYPE_DICT = {
   float: FIELD_TYPES.FLOAT,
   string: FIELD_TYPES.STRING,
   "[": FIELD_TYPES.ARRAY,
+  "*": FIELD_TYPES.MULTI_LINE_ARRAY,
   "{": FIELD_TYPES.MAP,
   "<": FIELD_TYPES.SUB_TABLE,
 };
+
+function getTypeSeparator(types) {
+  switch (types.type) {
+    case FIELD_TYPES.ARRAY:
+      return "|";
+    case FIELD_TYPES.MAP:
+      return "/";
+    default:
+      return ",";
+  }
+}
 
 const parseCollectionType = {
   [FIELD_TYPES.ARRAY]: function (t) {
@@ -33,6 +46,20 @@ const parseCollectionType = {
       return { type: FIELD_TYPES.ERROR };
     } else {
       return { type: FIELD_TYPES.ARRAY, subType: subType };
+    }
+  },
+  [FIELD_TYPES.MULTI_LINE_ARRAY]: function (t) {
+    var pattern = /^\*(.+)/
+    var result = pattern.exec(t);
+    if (result == null) {
+      return { type: FIELD_TYPES.ERROR };
+    }
+
+    var subType = parseType(result[1]);
+    if (subType == null) {
+      return { type: FIELD_TYPES.ERROR };
+    } else {
+      return { type: FIELD_TYPES.MULTI_LINE_ARRAY, subType: subType };
     }
   },
   [FIELD_TYPES.MAP]: function (t) {
@@ -66,7 +93,7 @@ const parseCollectionType = {
 };
 
 function parseType(t) {
-  if (t == undefined || t.startsWith("#")) {
+  if (t == undefined || typeof(t) != 'string' || t.startsWith("#")) {
     return { type: FIELD_TYPES.SKIP };
   }
 
@@ -82,7 +109,7 @@ function parseType(t) {
 }
 
 function parseDefault(type, value) {
-  if (value && value !== "") {
+  if (value != undefined && value !== "") {
     return value;
   }
 
@@ -159,6 +186,7 @@ function parseValue(fmt, types, value) {
     case FIELD_TYPES.STRING:
       return "\"" + value + "\"";
     case FIELD_TYPES.ARRAY:
+    case FIELD_TYPES.MULTI_LINE_ARRAY:
       return formatArray(fmt, types.subType, value);
     case FIELD_TYPES.MAP:
       return formatMap(fmt, types.subTypes, value);
@@ -178,6 +206,7 @@ module.exports = Object.freeze({
   FIELD_TYPES: FIELD_TYPES,
   FIELD_TYPE_DICT: BASE_TYPE_DICT,
 
+  getTypeSeparator: getTypeSeparator,
   isSkipType: isSkipType,
   parseType: parseType,
   parseValue: parseValue
