@@ -26,16 +26,16 @@ function generate(sheet, type) {
     var fmt = fmts[type]
     var descs = sheet.data[0];
     var names = sheet.data[1];
-    var types = parseTypes(sheet.data[2]);
+    var fields = parseFields(sheet.data[2]);
 
     const buffer = []
     buffer.push(fmt.fileHead + fmt.arrayBrace.left + "\n");
-    writeFileds(buffer, fmt, types, descs)
-    writeFileds(buffer, fmt, types, names)
+    writeColumns(buffer, fmt, fields, descs)
+    writeColumns(buffer, fmt, fields, names)
 
     for (var i = 4; i < sheet.data.length; i++) {
         var columns = sheet.data[i];
-        var columnLen = getColumLength(types)
+        var columnLen = getColumLength(fields)
 
         if (isEmpty(columns[0])) {
             continue;
@@ -43,19 +43,19 @@ function generate(sheet, type) {
 
         buffer.push("\t" + fmt.arrayBrace.left);
         for (var j = 0; j < columnLen; j++) {
-            var columnType = types[j];
+            var field = fields[j];
 
-            if (columnType.type == parser.FIELD_TYPES.SKIP) {
+            if (field.type == parser.FIELD_TYPES.SKIP) {
                 continue;
             }
 
-            if (columnType.type == parser.FIELD_TYPES.ERROR) {
+            if (field.type == parser.FIELD_TYPES.ERROR) {
                 console.error("Field type error, name: " + names[j]);
                 continue;
             }
 
-            var columnValue = preprocessData(types, columns, j)
-            buffer.push(parser.parseValue(fmt, columnType, columnValue))
+            var columnValue = preprocessData(fields, columns, j)
+            buffer.push(parser.parseValue(fmt, field, columnValue))
             if (j + 1 < columnLen) {
                 buffer.push(", ");
             }
@@ -111,23 +111,23 @@ function preprocessData(types, columns, idx) {
     }
 }
 
-function parseTypes(types) {
-    var field_types = [];
-    for (var i = 0; i < types.length; i++) {
-        field_types.push(parser.parseType(types[i]));
+function parseFields(columns) {
+    var fields = [];
+    for (var i = 0; i < columns.length; i++) {
+        fields.push(parser.parseType(columns[i]));
     }
-    return field_types
+    return fields
 }
 
-function writeFileds(buffer, fmt, types, fields) {
+function writeColumns(buffer, fmt, fields, columns) {
     buffer.push("\t" + fmt.arrayBrace.left);
-    for (var i = 0; i < fields.length; i++) {
-        var columnType = types[i];
-        if (parser.isSkipType(columnType.type)) {
+    for (var i = 0; i < columns.length; i++) {
+        var field = fields[i];
+        if (parser.isSkipType(field.type)) {
             continue;
         }
-        buffer.push("\"" + fields[i] + "\"")
-        if (i + 1 < fields.length) {
+        buffer.push("\"" + columns[i] + "\"")
+        if (i + 1 < columns.length) {
             buffer.push(", ");
         }
     }

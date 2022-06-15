@@ -22,8 +22,8 @@ const BASE_TYPE_DICT = {
   "<": FIELD_TYPES.SUB_TABLE,
 };
 
-function getTypeSeparator(types) {
-  switch (types.type) {
+function getTypeSeparator(field) {
+  switch (field.type) {
     case FIELD_TYPES.ARRAY:
       return "|";
     case FIELD_TYPES.MAP:
@@ -124,15 +124,15 @@ function parseDefault(type, value) {
   }
 }
 
-function formatArray(fmt, types, value) {
+function formatArray(fmt, field, value) {
   var buffer = []
-  switch (types.type) {
+  switch (field.type) {
     case FIELD_TYPES.ARRAY:
       var items = value.split("|");
       buffer.push(fmt.arrayBrace.left);
       {
         for (var i = 0; i < items.length; i++) {
-          buffer.push(parseValue(fmt, types, items[i]));
+          buffer.push(parseValue(fmt, field, items[i]));
           if (i + 1 < items.length) {
             buffer.push(", ");
           }
@@ -145,7 +145,7 @@ function formatArray(fmt, types, value) {
       buffer.push(fmt.arrayBrace.left);
       {
         for (var i = 0; i < items.length; i++) {
-          buffer.push(parseValue(fmt, types, items[i]));
+          buffer.push(parseValue(fmt, field, items[i]));
           if (i + 1 < items.length) {
             buffer.push(", ");
           }
@@ -159,14 +159,14 @@ function formatArray(fmt, types, value) {
   return buffer.join('');
 }
 
-function formatMap(fmt, types, value) {
+function formatMap(fmt, fields, value) {
   var buffer = []
   buffer.push(fmt.objectBrace.left);
   var items = value.split("/");
   for (var i = 0; i < items.length; i++) {
-    var t = types[i];
-    buffer.push(fmt.keyWrap.left + t.key + fmt.keyWrap.right)
-    buffer.push(fmt.objectBrace.equal + parseValue(fmt, t.type, items[i]));
+    var field = fields[i];
+    buffer.push(fmt.keyWrap.left + field.key + fmt.keyWrap.right)
+    buffer.push(fmt.objectBrace.equal + parseValue(fmt, field.type, items[i]));
     if (i + 1 < items.length) {
       buffer.push(", ");
     }
@@ -175,9 +175,9 @@ function formatMap(fmt, types, value) {
   return buffer.join('');
 }
 
-function parseValue(fmt, types, value) {
-  value = parseDefault(types.type, value)
-  switch (types.type) {
+function parseValue(fmt, field, value) {
+  value = parseDefault(field.type, value)
+  switch (field.type) {
     case FIELD_TYPES.BOOLEAN:
       return value == "0" ? "false" : "true";
     case FIELD_TYPES.INTEGER:
@@ -187,9 +187,9 @@ function parseValue(fmt, types, value) {
       return "\"" + value + "\"";
     case FIELD_TYPES.ARRAY:
     case FIELD_TYPES.MULTI_LINE_ARRAY:
-      return formatArray(fmt, types.subType, value);
+      return formatArray(fmt, field.subType, value);
     case FIELD_TYPES.MAP:
-      return formatMap(fmt, types.subTypes, value);
+      return formatMap(fmt, field.subTypes, value);
   }
   return "ERROR";
 }
