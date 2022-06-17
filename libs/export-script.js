@@ -1,5 +1,5 @@
+const log = require("./log")
 const parser = require("./parser");
-const clc = require("cli-color");
 
 fmts = {
     "json": {
@@ -19,14 +19,22 @@ fmts = {
 };
 
 function isEmpty(field) {
-    return field == undefined || field == ''
+    var t = typeof (field)
+    if (t === 'undefined') {
+        return true;
+    } else if (t == "string") {
+        return !field.trim() || field.trim().length === 0
+    } else {
+        return false;
+    }
 }
 
 function generate(sheet, type) {
     var fmt = fmts[type]
     var descs = sheet.data[0];
     var names = sheet.data[1];
-    var fields = parseFields(sheet.data[2]);
+    var types = sheet.data[2];
+    var fields = parseFields(types, names);
 
     const buffer = []
     buffer.push(fmt.fileHead + fmt.arrayBrace.left + "\n");
@@ -45,12 +53,7 @@ function generate(sheet, type) {
         for (var j = 0; j < columnLen; j++) {
             var field = fields[j];
 
-            if (field.type == parser.FIELD_TYPES.SKIP) {
-                continue;
-            }
-
-            if (field.type == parser.FIELD_TYPES.ERROR) {
-                console.error("Field type error, name: " + names[j]);
+            if (parser.isSkipType(field.type)) {
                 continue;
             }
 
@@ -111,10 +114,16 @@ function preprocessData(types, columns, idx) {
     }
 }
 
-function parseFields(columns) {
+function parseFields(types, names) {
     var fields = [];
-    for (var i = 0; i < columns.length; i++) {
-        fields.push(parser.parseType(columns[i]));
+    for (var i = 0; i < types.length; i++) {
+        var field = parser.parseType(types[i]);
+
+        if (field.type == parser.FIELD_TYPES.ERROR) {
+            log.error("Field type error, name: " + names[i])
+        }
+
+        fields.push(field);
     }
     return fields
 }
@@ -148,7 +157,7 @@ function generateConsts(sheet, type) {
         }
 
         if (data.length < 4) {
-            console.log(clc.red('- The number of columns must not be less than 4.'))
+            log.error("The number of columns must not be less than 4.")
             break;
         }
 
@@ -157,7 +166,7 @@ function generateConsts(sheet, type) {
         var desc = data[3];
 
         if (parser.isSkipType(types.type)) {
-            console.log(clc.red(`- Data type error, skip current row[${name}] data`))
+            log.error(`Data type error, skip current row[${name}] data`)
             continue;
         }
 

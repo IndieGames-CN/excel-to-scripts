@@ -93,7 +93,7 @@ const parseCollectionType = {
 };
 
 function parseType(t) {
-  if (t == undefined || typeof(t) != 'string' || t.startsWith("#")) {
+  if (t == undefined || typeof (t) != 'string' || t.startsWith("#")) {
     return { type: FIELD_TYPES.SKIP };
   }
 
@@ -128,26 +128,30 @@ function formatArray(fmt, field, value) {
   var buffer = []
   switch (field.type) {
     case FIELD_TYPES.ARRAY:
-      var items = value.split("|");
       buffer.push(fmt.arrayBrace.left);
       {
-        for (var i = 0; i < items.length; i++) {
-          buffer.push(parseValue(fmt, field, items[i]));
-          if (i + 1 < items.length) {
-            buffer.push(", ");
+        if (value.trim().length > 0) {
+          var items = value.split("|");
+          for (var i = 0; i < items.length; i++) {
+            buffer.push(parseValue(fmt, field, items[i]));
+            if (i + 1 < items.length) {
+              buffer.push(", ");
+            }
           }
         }
       }
       buffer.push(fmt.arrayBrace.right);
       break;
     case FIELD_TYPES.MAP:
-      var items = value.split("|");
       buffer.push(fmt.arrayBrace.left);
       {
-        for (var i = 0; i < items.length; i++) {
-          buffer.push(parseValue(fmt, field, items[i]));
-          if (i + 1 < items.length) {
-            buffer.push(", ");
+        if (value.trim().length > 0) {
+          var items = value.split("|");
+          for (var i = 0; i < items.length; i++) {
+            buffer.push(parseValue(fmt, field, items[i]));
+            if (i + 1 < items.length) {
+              buffer.push(", ");
+            }
           }
         }
       }

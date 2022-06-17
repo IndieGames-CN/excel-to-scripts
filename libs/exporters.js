@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path")
+const log = require("./log")
 const reader = require("./reader");
-const clc = require("cli-color");
 
 const EXPORT_TYPE = {
   JSON: 'json',
@@ -22,7 +22,8 @@ function exportAll(type, xlsxList, srcePath, destPath) {
 }
 
 function exportSheets(type, srcePath, destPath) {
-  console.log(clc.green('- Export: ' + srcePath))
+  log.info('Export: ' + srcePath);
+
   var xlsx = reader.readXlsxContent(srcePath);
   xlsx.sheets.forEach((sheet) => {
     exportSheet(type, sheet, destPath);
@@ -30,7 +31,7 @@ function exportSheets(type, srcePath, destPath) {
 }
 
 function exportSheet(type, sheet, destPath) {
-  console.log(clc.green('- Export: ' + sheet.name))
+  log.info('Export: ' + sheet.name);
 
   var exporter = exporters[type];
   var fileData = null;
