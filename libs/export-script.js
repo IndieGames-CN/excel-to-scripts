@@ -46,7 +46,10 @@ function generate(sheet, type) {
         var columnLen = getColumLength(fields)
 
         if (isEmpty(columns[0])) {
-            continue;
+            if (i > 4) {
+                buffer.pop(); // remove line break
+            }
+            break;
         }
 
         buffer.push("\t" + fmt.arrayBrace.left);
