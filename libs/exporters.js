@@ -26,7 +26,11 @@ function exportSheets(type, srcePath, destPath) {
 
   var xlsx = reader.readXlsxContent(srcePath);
   xlsx.sheets.forEach((sheet) => {
-    exportSheet(type, sheet, destPath);
+    try {
+      exportSheet(type, sheet, destPath);
+    } catch (error) {
+      log.error(error.message + " " + error.stack);
+    }
   });
 }
 

@@ -168,6 +168,9 @@ function formatMap(fmt, fields, value) {
   buffer.push(fmt.objectBrace.left);
   var items = value.split("/");
   for (var i = 0; i < items.length; i++) {
+    if (i >= fields.length) {
+      break;
+    }
     var field = fields[i];
     buffer.push(fmt.keyWrap.left + field.key + fmt.keyWrap.right)
     buffer.push(fmt.objectBrace.equal + parseValue(fmt, field.type, items[i]));
