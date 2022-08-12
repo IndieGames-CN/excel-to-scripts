@@ -35,8 +35,8 @@ $ npm run pkgwin
 
 单个 Excel 支持多个 Sheet 工作表，工作表类型分为两种：
 
-- 普通工作表
-- 常量工作表
+- 普通工作表，示例文件 [NormalWorksheet.xlsx](./data/NormalWorksheet.xlsx)
+- 常量工作表，示例文件 [ConstantWorksheet.xlsx](./data/ConstantWorksheet.xlsx)
 
 ### 普通工作表
 

@@ -35,8 +35,8 @@ After launching the executable, perform the export process.
 
 A single Excel supports multiple Sheet worksheets, with two types of worksheets:
 
-- General Worksheet
-- Constant Worksheet
+- General Worksheet, Example file [NormalWorksheet.xlsx](./data/NormalWorksheet.xlsx)
+- Constant Worksheet，Example file [ConstantWorksheet.xlsx](./data/ConstantWorksheet.xlsx)
 
 ### General Worksheet
 
