@@ -1,20 +1,23 @@
 {
-  "name": "excel-exporter",
+  "name": "excel-to-scripts",
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
   "scripts": {
     "pkgwin": "pkg . -t node16-win --out-path=dist/win",
+    "pkgmacos": "pkg . -t node16-macos-x64 --out-path=dist/macos",
+    "pkglinux": "pkg . -t node16-linux --out-path=dist/linux",
     "test": "node index.js"
   },
   "bin": {
     "excel-exporter": "./app.js"
   },
   "keywords": [
-    "excel",
-    "json",
-    "cs",
-    "lua"
+    "excel export",
+    "excel to scripts",
+    "excel to json",
+    "excel to cs",
+    "excel to lua"
   ],
   "author": "veinin",
   "license": "ISC",

@@ -1,50 +1,74 @@
-# Excel 导出为脚本工具
+# Excel To Scripts
 
-## 快速开始
+Excel(.xlsx) file data export to script, high-level programming language tools. Support exporting to different scripting languages such as Json, Lua, C#, etc.
 
-打包工程
+## Packaged application
 
 ```
-npm run pkgwin
+$ git clone https://github.com/Veinin/excel-to-scripts.git
+$ cd excel-to-scripts
+$ npm run pkgwin
 ```
 
-## 表格格式
+## Running
 
-单个 Excel 支持多个 Sheet 工作表，工作表类型分为两种：
+On Windows, start `excel-to-scripts.exe`, which by default detects the configuration file on the first run, and if not, automatically generates.
 
-- 普通工作表
-- 常量工作表
+``` json
+// config.json
+{
+    "srcePath": "./data",
+    "destPath": "./output"
+}
+```
 
-### 普通工作表
+where `srcePath` is the Excel directory and `destPath` is the export directory.
 
-普通工作表是传统的 Excel 配置，工作表分为表头行（占用4行）和内容行。
+After launching the executable, perform the export process.
 
-#### 表头
+- 1. Use the arrow keys up and down to select the export script type.
+- 2. Use the arrow keys up and down to select the export file, or enter the selection number directly.
+- 3. Press the Enter key to execute.
 
-表头分为4行：
+![Export](./docs/Export.gif)
 
-- 第一行注释名称
-- 第二行字段名称
-- 第三行数据字段类型
-- 第四行为保留行（其他高级功能）
+## Sheet Format
 
-#### 数据类型描述
+A single Excel supports multiple Sheet worksheets, with two types of worksheets:
 
-- 基础数据类型
-  - bool，布尔型（0=false，1=true）
-  - int，整形
-  - float，浮点型
-  - string，字符串
-- 集合类型，支持泛型
-  - [int]，数组
-    - [[int]]，二维数组
-    - [{id=int,num=int}]，字典数组
-  - {id=int,num=int}，字典
-    - {id=int,nums=[int]}，字典数组
-    - {id=int,nums=[[int]]}，字典二维数组
-- 注释，#
+- General Worksheet
+- Constant Worksheet
 
-#### 工作表格式举例
+### General Worksheet
+
+A normal worksheet is a traditional Excel configuration where the worksheet is divided into header rows (occupying 4 rows) and content rows.
+
+#### Headers
+
+The table header is divided into 4 rows.
+
+- Comment Name
+- Field Name
+- Data field type
+- Fourth row reserved row (other advanced features)
+
+#### Data Type Description
+
+- Basic Data Types
+  - bool, boolean (0=false, 1=true)
+  - int, shape-shifting
+  - float, floating point
+  - string, string
+- Set types, with generic support
+  - [int], arrays
+    - [[int]], two-dimensional arrays
+    - [{id=int,num=int}], dictionary array
+  - {id=int,num=int}, dictionary
+    - {id=int,nums=[int]}, dictionary array
+    - {id=int,nums=[[int]]}, dictionary two-dimensional array
+- Comments, using `#` markup
+
+#### Example of worksheet format
 
 |UID|Describe|||||||
 |---|---|---|---|---|---|---|---|
@@ -54,7 +78,7 @@ npm run pkgwin
 |1|a|1|100|1.2|foo|1001, 1002|1001/1002|
 |2|b|0|200|0.1|bar|200, 300|1001/1002|
 
-上面数据导出为 Lua 后，输出为：
+After exporting the above data to Lua, the output is
 
 ```lua
 return {
@@ -67,16 +91,18 @@ return {
 
 ### 常量工作表
 
-表明页签以 `consts` 结尾，此表分类 4 列：
+We may need some systematic constant data, which will be exported in this table when we define an Excel page tab ending with the `consts` keyword:
 
-- Name，常量字段名称
-- Type，字段类型
-- Value，字段值
-- Describe，字段描述
+The constant table data definition contains 4 columns.
 
-举例格式为：
+- Name, the name of the constant field.
+- Type, the field type.
+- Value, the value of the field.
+- Describe, field description.
 
-|  Name | Type | Value | Describe |
+The example format is.
+
+|Name|Type|Value|Describe|
 |---|---|---|---|
 |TEST_BOOLEAN|bool|true|Floating point|
 |TEST_STRING|string|hello|String constants|
@@ -85,7 +111,7 @@ return {
 |TEST_ARRAY|[int]|1, 2, 3, 4, 5|Array constants|
 |TEST_MAP|{a=int,b=int,c=int}|1/2/3|Dictionary constants|
 
-导出后产生输出文件，如输出 Lua 文件格式：
+The export produces an output file, such as the output Lua file format.
 
 ``` lua
 return {
@@ -98,9 +124,9 @@ return {
 }
 ```
 
-### 注释
+### Comments
 
-使用 `#` 标注：
+Use `#` to mark.
 
-- `字段类型`，该列数据不会导出。
-- `Excel 页签名`，该页签数据不会导出。
+- `Field type`, the data for that column will not be exported.
+- `Excel page signature`, the data for that page signature will not be exported.
