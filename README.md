@@ -8,8 +8,6 @@
 npm run pkgwin
 ```
 
-
-
 ## 表格格式
 
 单个 Excel 支持多个 Sheet 工作表，工作表类型分为两种：
@@ -32,29 +30,40 @@ npm run pkgwin
 
 ### 数据类型描述
 
-- bool，布尔型（0=false，1=true）
-- int，整形
-- float，浮点型
-- string，字符串
-- [int]，数组
-  - [[int]]，二维数组
-  - [{id=int,num=int}]，字典数组
-- {id=int,num=int}，字典
-  - {id=int,nums=[int]}，字典数组
-  - {id=int,nums=[[int]]}，字典二维数组
+- 基础数据类型
+  - bool，布尔型（0=false，1=true）
+  - int，整形
+  - float，浮点型
+  - string，字符串
+- 集合类型，支持泛型
+  - [int]，数组
+    - [[int]]，二维数组
+    - [{id=int,num=int}]，字典数组
+  - {id=int,num=int}，字典
+    - {id=int,nums=[int]}，字典数组
+    - {id=int,nums=[[int]]}，字典二维数组
+- 注释，#
 
 #### 工作表格式举例
 
-|UID|Describe||||||Two-dimensional arrays|Array Dictionary|
-|---|---|---|---|---|---|---|---|---|
-|id||bool_data|int_data|float_data|string_data|arr_data|arr2_data|arr3_data|dic_data|
-|int|#|bool|int|float|string|[int]|[[int]]|[{id=int,num=int}]|{id=int,num=int}|
-|unique||||||||||
-|1|a|1|100|1.2|foo|1001, 1002|1,2|3,4|5,6|1/2|3/4|1001/1002|
-|2|b|0|200|0.1|bar|200, 300|2,4|7|5/6|7/8|1001/1002|
+|UID|Describe|||||||
+|---|---|---|---|---|---|---|---|
+|id||bool_data|int_data|float_data|string_data|arr_data|dic_data|
+|int|#|bool|int|float|string|[int]|{id=int,num=int}|
+|unique||||||||
+|1|a|1|100|1.2|foo|1001, 1002|1001/1002|
+|2|b|0|200|0.1|bar|200, 300|1001/1002|
 
+上面数据导出为 Lua 后，输出为：
 
-
+```lua
+return {
+	{"UID", },
+	{"id", "bool_data", "int_data", "float_data", "string_data", "arr_data", "dic_data"},
+	{1, true, 100, 1.2, "foo", {1001, 1002}, {id = 1001, num = 1002}},
+	{2, false, 200, 0.1, "bar", {200, 300}, {id = 1001, num = 1002}}
+}
+```
 
 ### 常量工作表
 
@@ -88,3 +97,7 @@ return {
 	TEST_MAP = {a = 1, b = 2, c = 3}
 }
 ```
+
+### 注释
+
+使用 `#` 标注的类型或 `Excel 页签名` 不会成为导出数据。
