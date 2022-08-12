@@ -90,7 +90,7 @@ return {
 }
 ```
 
-### 常量工作表
+### Constant Worksheet
 
 We may need some systematic constant data, which will be exported in this table when we define an Excel page tab ending with the `consts` keyword:
 
