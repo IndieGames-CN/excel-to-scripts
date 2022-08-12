@@ -55,17 +55,17 @@ The table header is divided into 4 rows.
 #### Data Type Description
 
 - Basic Data Types
-  - bool, boolean (0=false, 1=true)
-  - int, shape-shifting
-  - float, floating point
-  - string, string
+  - `bool`, boolean (0=false, 1=true)
+  - `int`, shape-shifting
+  - `float`, floating point
+  - `string`, string
 - Set types, with generic support
-  - [int], arrays
-    - [[int]], two-dimensional arrays
-    - [{id=int,num=int}], dictionary array
-  - {id=int,num=int}, dictionary
-    - {id=int,nums=[int]}, dictionary array
-    - {id=int,nums=[[int]]}, dictionary two-dimensional array
+  - `[int]`, arrays
+    - `[[int]]`, two-dimensional arrays
+    - `[{id=int,num=int}]`, dictionary array
+  - `{id=int,num=int}`, dictionary
+    - `{id=int,nums=[int]}`, dictionary array
+    - `{id=int,nums=[[int]]}`, dictionary two-dimensional array
 - Comments, using `#` markup
 
 #### Example of worksheet format
