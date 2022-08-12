@@ -25,9 +25,8 @@ const BASE_TYPE_DICT = {
 function getTypeSeparator(field) {
   switch (field.type) {
     case FIELD_TYPES.ARRAY:
-      return "|";
     case FIELD_TYPES.MAP:
-      return "/";
+      return "|";
     default:
       return ",";
   }
@@ -109,6 +108,10 @@ function parseType(t) {
 }
 
 function parseDefault(type, value) {
+  if (typeof(value) == 'string') {
+    value = value.trim()
+  }
+
   if (value != undefined && value !== "") {
     return value;
   }
@@ -125,6 +128,8 @@ function parseDefault(type, value) {
 }
 
 function formatArray(fmt, field, value) {
+  value = value.toString();
+
   var buffer = []
   switch (field.type) {
     case FIELD_TYPES.ARRAY:
@@ -152,6 +157,19 @@ function formatArray(fmt, field, value) {
             if (i + 1 < items.length) {
               buffer.push(", ");
             }
+          }
+        }
+      }
+      buffer.push(fmt.arrayBrace.right);
+      break;
+    case FIELD_TYPES.STRING:
+      buffer.push(fmt.arrayBrace.left);
+      {
+        var items = value.split(",");
+        for (var i = 0; i < items.length; i++) {
+          buffer.push(parseValue(fmt, field, items[i]));
+          if (i + 1 < items.length) {
+            buffer.push(",");
           }
         }
       }
@@ -182,6 +200,14 @@ function formatMap(fmt, fields, value) {
   return buffer.join('');
 }
 
+function formatString(value) {
+  if (typeof (value) == "string" && value.includes("\"")) {
+    return "'" + value + "'";
+  } else {
+    return "\"" + value + "\"";
+  }
+}
+
 function parseValue(fmt, field, value) {
   value = parseDefault(field.type, value)
   switch (field.type) {
@@ -191,7 +217,7 @@ function parseValue(fmt, field, value) {
     case FIELD_TYPES.FLOAT:
       return value;
     case FIELD_TYPES.STRING:
-      return "\"" + value + "\"";
+      return formatString(value);
     case FIELD_TYPES.ARRAY:
     case FIELD_TYPES.MULTI_LINE_ARRAY:
       return formatArray(fmt, field.subType, value);
@@ -216,5 +242,6 @@ module.exports = Object.freeze({
   getTypeSeparator: getTypeSeparator,
   isSkipType: isSkipType,
   parseType: parseType,
-  parseValue: parseValue
+  parseValue: parseValue,
+  parseDefault: parseDefault,
 });

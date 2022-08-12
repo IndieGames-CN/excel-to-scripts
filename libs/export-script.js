@@ -1,4 +1,4 @@
-const log = require("./log")
+const log = require("./log");
 const parser = require("./parser");
 
 fmts = {
@@ -89,21 +89,27 @@ function getColumLength(types) {
     return length;
 }
 
-function preprocessData(types, columns, idx) {
-    var type = types[idx].type;
+function preprocessData(fields, columns, idx) {
+    var field = fields[idx]
 
-    if (type == parser.FIELD_TYPES.MULTI_LINE_ARRAY) {
+    if (field.type == parser.FIELD_TYPES.MULTI_LINE_ARRAY) {
         var values = [];
-        var separator = parser.getTypeSeparator(types[idx].subType)
+        var separator = parser.getTypeSeparator(field.subType)
 
         values.push(columns[idx]);
         values.push(separator);
 
         for (var i = idx + 1; i < columns.length; i++) {
-            var columnType = types[i].type
+            var columnType = fields[i].type
             if (parser.isSkipType(columnType)) {
-                values.push(columns[i]);
+                var value = columns[i];
+                if (isEmpty(value)) {
+                    continue;
+                }
+                values.push(value);
                 values.push(separator);
+            } else {
+                break;
             }
         }
 
