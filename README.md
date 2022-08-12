@@ -1,6 +1,6 @@
 # Excel To Scripts
 
-Excel(.xlsx) file data export to script, high-level programming language tools. Support exporting to different scripting languages such as Json, Lua, C#, etc.
+`Excel`(.xlsx) file data export to script, high-level programming language tools. Support exporting to different scripting languages such as `Json`, `Lua`, `C#`, etc.
 
 ## Packaged application
 
@@ -10,12 +10,13 @@ $ cd excel-to-scripts
 $ npm run pkgwin
 ```
 
-## Running
+## Usage
 
 On Windows, start `excel-to-scripts.exe`, which by default detects the configuration file on the first run, and if not, automatically generates.
 
+Configuration file `config.json`:
+
 ``` json
-// config.json
 {
     "srcePath": "./data",
     "destPath": "./output"

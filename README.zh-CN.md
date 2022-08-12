@@ -1,6 +1,6 @@
 # Excel 导出为脚本工具
 
-Excel 数据导出为脚本、高级编程语言工具。支持导出为 Json、Lua、C# 等脚本语言。
+`Excel` 数据导出为脚本、高级编程语言工具。支持导出为 `Json`、`Lua`、`C#` 等脚本语言。
 
 ## 打包
 
@@ -12,10 +12,11 @@ $ npm run pkgwin
 
 ## 运行
 
-Windows 环境下，启动 `excel-to-scripts.exe`，默认第一次运行会检测配置文件，如果没有则自动生成：
+Windows 环境下，启动 `excel-to-scripts.exe`，默认第一次运行会检测配置文件，如果没有则自动生成。
+
+配置文件 `config.json`：
 
 ``` json
-// config.json
 {
     "srcePath": "./data",
     "destPath": "./output"
@@ -55,17 +56,17 @@ Windows 环境下，启动 `excel-to-scripts.exe`，默认第一次运行会检�
 #### 数据类型描述
 
 - 基础数据类型
-  - bool，布尔型（0=false，1=true）
-  - int，整形
-  - float，浮点型
-  - string，字符串
+  - `bool`，布尔型（0=false，1=true）
+  - `int`，整形
+  - `float`，浮点型
+  - `string`，字符串
 - 集合类型，支持泛型
-  - [int]，数组
-    - [[int]]，二维数组
-    - [{id=int,num=int}]，字典数组
-  - {id=int,num=int}，字典
-    - {id=int,nums=[int]}，字典数组
-    - {id=int,nums=[[int]]}，字典二维数组
+  - `[int]`，数组
+    - `[[int]]`，二维数组
+    - `[{id=int,num=int}]`，字典数组
+  - `{id=int,num=int}`，字典
+    - `{id=int,nums=[int]}`，字典数组
+    - `{id=int,nums=[[int]]}`，字典二维数组
 - 注释，#
 
 #### 工作表格式举例
