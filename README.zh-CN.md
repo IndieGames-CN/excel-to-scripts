@@ -12,9 +12,7 @@ $ npm run pkgwin
 
 ## 运行
 
-Windows 环境下，启动 `excel-to-scripts.exe`，默认第一次运行会检测配置文件，如果没有则自动生成。
-
-配置文件 `config.json`：
+启动 `excel-to-scripts` 执行文件，默认第一次运行会检测配置文件，如果没有则自动生成配置文件 `config.json`：
 
 ``` json
 {
@@ -23,7 +21,7 @@ Windows 环境下，启动 `excel-to-scripts.exe`，默认第一次运行会检�
 }
 ```
 
-其中 `srcePath` 为 Excel 目录，`destPath` 为导出目录。
+其中 `srcePath` 为 Excel 文件目录，`destPath` 为数据导出目录。
 
 启动执行文件后，执行导出流程：
 

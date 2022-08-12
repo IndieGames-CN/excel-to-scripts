@@ -12,9 +12,7 @@ $ npm run pkgwin
 
 ## Usage
 
-On Windows, start `excel-to-scripts.exe`, which by default detects the configuration file on the first run, and if not, automatically generates.
-
-Configuration file `config.json`:
+Start the `excel-to-scripts` executable, which by default detects the configuration file on the first run and automatically generates the configuration file `config.json` if it does not exist.
 
 ``` json
 {
@@ -23,7 +21,7 @@ Configuration file `config.json`:
 }
 ```
 
-where `srcePath` is the Excel directory and `destPath` is the export directory.
+Where `srcePath` is the Excel file directory and `destPath` is the data export directory.
 
 After launching the executable, perform the export process.
 
