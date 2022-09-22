@@ -129,6 +129,12 @@ function parseDefault(type, value) {
   }
 }
 
+function splitPlus(str, sep) {
+  var a = str.trim().split(sep)
+  if (a[0] == '' && a.length == 1) return [];
+  return a;
+}
+
 function formatArray(fmt, field, value) {
   value = value.toString();
 
@@ -137,13 +143,11 @@ function formatArray(fmt, field, value) {
     case FIELD_TYPES.ARRAY:
       buffer.push(fmt.arrayBrace.left);
       {
-        if (value.trim().length > 0) {
-          var items = value.split("|");
-          for (var i = 0; i < items.length; i++) {
-            buffer.push(parseValue(fmt, field, items[i]));
-            if (i + 1 < items.length) {
-              buffer.push(", ");
-            }
+        var items = splitPlus(value, "|");
+        for (var i = 0; i < items.length; i++) {
+          buffer.push(parseValue(fmt, field, items[i]));
+          if (i + 1 < items.length) {
+            buffer.push(", ");
           }
         }
       }
@@ -152,13 +156,11 @@ function formatArray(fmt, field, value) {
     case FIELD_TYPES.MAP:
       buffer.push(fmt.arrayBrace.left);
       {
-        if (value.trim().length > 0) {
-          var items = value.split("|");
-          for (var i = 0; i < items.length; i++) {
-            buffer.push(parseValue(fmt, field, items[i]));
-            if (i + 1 < items.length) {
-              buffer.push(", ");
-            }
+        var items = splitPlus(value, "|");
+        for (var i = 0; i < items.length; i++) {
+          buffer.push(parseValue(fmt, field, items[i]));
+          if (i + 1 < items.length) {
+            buffer.push(", ");
           }
         }
       }
@@ -168,7 +170,7 @@ function formatArray(fmt, field, value) {
     case FIELD_TYPES.DYNAMIC:
       buffer.push(fmt.arrayBrace.left);
       {
-        var items = value.split(",");
+        var items = splitPlus(value, ",");
         for (var i = 0; i < items.length; i++) {
           buffer.push(parseValue(fmt, field, items[i]));
           if (i + 1 < items.length) {
@@ -187,7 +189,13 @@ function formatArray(fmt, field, value) {
 function formatMap(fmt, fields, value) {
   var buffer = []
   buffer.push(fmt.objectBrace.left);
+
   var items = value.split("/");
+  var itemDiff = fields.length - items.length;
+  for (var i = 0; i < itemDiff; i++) {
+    items.push('');
+  }
+
   for (var i = 0; i < items.length; i++) {
     if (i >= fields.length) {
       break;
