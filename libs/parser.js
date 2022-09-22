@@ -9,6 +9,7 @@ const FIELD_TYPES = {
   MULTI_LINE_ARRAY: 6,
   MAP: 7,
   SUB_TABLE: 8,
+  DYNAMIC: 99,
 };
 
 const BASE_TYPE_DICT = {
@@ -20,6 +21,7 @@ const BASE_TYPE_DICT = {
   "*": FIELD_TYPES.MULTI_LINE_ARRAY,
   "{": FIELD_TYPES.MAP,
   "<": FIELD_TYPES.SUB_TABLE,
+  "dynamic": FIELD_TYPES.DYNAMIC,
 };
 
 function getTypeSeparator(field) {
@@ -108,7 +110,7 @@ function parseType(t) {
 }
 
 function parseDefault(type, value) {
-  if (typeof(value) == 'string') {
+  if (typeof (value) == 'string') {
     value = value.trim()
   }
 
@@ -163,6 +165,7 @@ function formatArray(fmt, field, value) {
       buffer.push(fmt.arrayBrace.right);
       break;
     case FIELD_TYPES.STRING:
+    case FIELD_TYPES.DYNAMIC:
       buffer.push(fmt.arrayBrace.left);
       {
         var items = value.split(",");
@@ -223,8 +226,41 @@ function parseValue(fmt, field, value) {
       return formatArray(fmt, field.subType, value);
     case FIELD_TYPES.MAP:
       return formatMap(fmt, field.subTypes, value);
+    case FIELD_TYPES.DYNAMIC:
+      return parseDynamic(fmt, field, value);
   }
   return "ERROR";
+}
+
+function isNumeric(str) {
+  return !isNaN(str) && !isNaN(parseFloat(str))
+}
+
+function isBoolean(str) {
+  if (typeof str == "string")
+    return str == "true" || str == "false" ? true : false;
+  return false;
+}
+
+function parseDynamic(fmt, field, value) {
+  if (isNumeric(value)) {
+    value = value * 1
+    if (value % 1 === 0) {
+      type = FIELD_TYPES.INTEGER;
+    } else {
+      type = FIELD_TYPES.FLOAT;
+    }
+  } else if (isBoolean(value)) {
+    type = FIELD_TYPES.BOOLEAN;
+    value = value == "true" ? 1 : 0;
+  } else {
+    type = FIELD_TYPES.STRING;
+  }
+
+  field.type = type;
+  var value = parseValue(fmt, field, value);
+  field.type = FIELD_TYPES.DYNAMIC;
+  return value;
 }
 
 function isSkipType(type) {

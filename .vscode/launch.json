@@ -11,7 +11,7 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}\\tests\\test.js"
+            "program": "${workspaceFolder}\\tests\\test-dynamic.js"
         }
     ]
 }
