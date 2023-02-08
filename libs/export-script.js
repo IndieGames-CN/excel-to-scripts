@@ -96,8 +96,11 @@ function preprocessData(fields, columns, idx) {
         var values = [];
         var separator = parser.getTypeSeparator(field.subType)
 
-        values.push(columns[idx]);
-        values.push(separator);
+        var first = columns[idx]
+        if (!isEmpty(first)) {
+            values.push(columns[idx]);
+            values.push(separator);
+        }
 
         for (var i = idx + 1; i < columns.length; i++) {
             var columnType = fields[i].type
