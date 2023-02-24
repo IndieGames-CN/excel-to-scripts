@@ -103,7 +103,11 @@ function preprocessData(fields, columns, idx) {
         }
 
         for (var i = idx + 1; i < columns.length; i++) {
-            var columnType = fields[i].type
+            var field = fields[i]
+            if (field == null) {
+                break
+            }
+            var columnType = field.type
             if (parser.isSkipType(columnType)) {
                 var value = columns[i];
                 if (isEmpty(value)) {
