@@ -49,7 +49,7 @@ function generate(sheet, type) {
 
         var id = columns[0];
         if (keys.has(id)) {
-            log.error("Duplicate ID: " + id + ", Column: " + i);
+            log.error("Duplicate ID: " + id + ", Row: " + i);
         }
         else {
             keys.set(id, true)
