@@ -41,9 +41,19 @@ function generate(sheet, type) {
     writeColumns(buffer, fmt, fields, descs)
     writeColumns(buffer, fmt, fields, names)
 
+    var keys = new Map();
+
     for (var i = 4; i < sheet.data.length; i++) {
         var columns = sheet.data[i];
         var columnLen = getColumLength(fields)
+
+        var id = columns[0];
+        if (keys.has(id)) {
+            log.error("Duplicate ID: " + id + ", Column: " + i);
+        }
+        else {
+            keys.set(id, true)
+        }
 
         if (isEmpty(columns[0])) {
             if (i > 4) {
