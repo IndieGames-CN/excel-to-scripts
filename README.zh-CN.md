@@ -65,6 +65,7 @@ $ npm run pkgwin
   - `{id=int,num=int}`，字典
     - `{id=int,nums=[int]}`，字典数组
     - `{id=int,nums=[[int]]}`，字典二维数组
+- `*类型` 组合数据类型，此列已经后续通过 `#` 标识的列
 - 注释，#
 
 #### 工作表格式举例
