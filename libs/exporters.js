@@ -46,6 +46,7 @@ function exportSheet(type, sheet, destPath) {
     fileData = exporter.generate(sheet, type);
   }
 
+  console.log(destPath)
   if (!fs.existsSync(destPath)) {
     fs.mkdirSync(destPath, {recursive: true});
   }

@@ -2,16 +2,22 @@ const fs = require('fs')
 const path = require('path')
 const cmder = require('./libs/cmder');
 
+const defaultConfigs = {
+    "srcePath": "./data",
+    "destPath": {
+        ['json']: "./dist/output/json",
+        ['lua']: "./dist/output/lua",
+        ['cs']: "./dist/output/cs",
+    }
+}
+
 var configPath = path.join(process.cwd(), "./config.json");
 var configs = null;
 if (!fs.existsSync(configPath)) {
-    configs = {
-        "srcePath": "./data/input",
-        "destPath": "./data/output"
-    }
+    configs = defaultConfigs
     fs.writeFileSync("config.json", JSON.stringify(configs, null, 4))
 } else {
     configs = JSON.parse(fs.readFileSync(configPath, "utf8"))
 }
 
-cmder.start(configs.srcePath, configs.destPath)
+cmder.start(configs)

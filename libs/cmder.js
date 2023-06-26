@@ -3,8 +3,7 @@ const reader = require('./reader');
 const exporters = require("./exporters")
 const inquirer = require('inquirer');
 
-var srcDir = null
-var outDir = null
+var configs = null
 var xlsxList = null
 var exportType = null
 var exportOption = "Export all"
@@ -22,7 +21,7 @@ function showExportType() {
 }
 
 function showExportList() {
-    var xlsxList = reader.readXlsxFileList(srcDir)
+    xlsxList = reader.readXlsxFileList(configs.srcePath)
 
     var choices = ["Refresh", "Export all"]
     choices.push(new inquirer.Separator());
@@ -43,25 +42,24 @@ function showExportList() {
             var option = answers.option;
             switch (option) {
                 case "Refresh":
-                    xlsxList = reader.readXlsxFileList(srcDir);
+                    xlsxList = reader.readXlsxFileList(configs.srcePath);
                     break;
                 case "Export all":
-                    exporters.exportAll(exportType, xlsxList, srcDir, outDir);
+                    exporters.exportAll(exportType, xlsxList, configs.srcePath, configs.destPath[exportType]);
                     break;
                 default:
-                    exporters.exportSheets(exportType, path.join(srcDir, option), outDir);
+                    exporters.exportSheets(exportType, path.join(configs.srcePath, option), configs.destPath[exportType]);
                     break;
             }
-            
+
             exportOption = option;
             showExportList();
         });
 }
 
-function start(src, out) {
-    srcDir = src
-    outDir = out
-    xlsxList = reader.readXlsxFileList(srcDir)
+function start(cfgs) {
+    configs = cfgs
+    xlsxList = reader.readXlsxFileList(configs.srcePath)
     showExportType();
 }
 
