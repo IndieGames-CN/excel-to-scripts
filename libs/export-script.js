@@ -161,11 +161,12 @@ function writeColumns(buffer, fmt, fields, columns) {
         if (parser.isSkipType(field.type)) {
             continue;
         }
-        buffer.push("\"" + columns[i] + "\"")
-        if (i + 1 < columns.length) {
+        if (i > 0) {
             buffer.push(", ");
         }
+        buffer.push("\"" + columns[i] + "\"")
     }
+
     buffer.push(fmt.arrayBrace.right + ",\n");
 }
 
