@@ -17,11 +17,11 @@ $ npm run pkgwin
 ``` json
 {
     "srcePath": "./data",
-    "destPath": "./output"
+    "destPath": "./output",
     "destPath": {
-        "json": "./outputs/json",
-        "lua": "./outputs/lua",
-        "cs": "./outputs/cs"
+        "json": ["./outputs/json"],
+        "lua": ["./outputs/lua"],
+        "cs": ["./outputs/cs"]
     }
 }
 ```

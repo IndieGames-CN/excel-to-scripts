@@ -17,7 +17,12 @@ Start the `excel-to-scripts` executable, which by default detects the configurat
 ``` json
 {
     "srcePath": "./data",
-    "destPath": "./output"
+    "destPath": "./output",
+    "destPath": {
+        "json": ["./outputs/json"],
+        "lua": ["./outputs/lua"],
+        "cs": ["./outputs/cs"]
+    }
 }
 ```
 
