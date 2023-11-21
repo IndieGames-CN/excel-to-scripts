@@ -5,9 +5,9 @@ const cmder = require('./libs/cmder');
 const defaultConfigs = {
     "srcePath": "./data",
     "destPath": {
-        ['json']: "./dist/output/json",
-        ['lua']: "./dist/output/lua",
-        ['cs']: "./dist/output/cs",
+        ['json']: ["./dist/output/json"],
+        ['lua']: ["./dist/output/lua"],
+        ['cs']: ["./dist/output/cs"],
     }
 }
 
