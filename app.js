@@ -5,13 +5,23 @@ const cmder = require('./libs/cmder');
 const defaultConfigs = {
     "srcePath": "./data",
     "destPath": {
-        ['json']: ["./dist/output/json"],
-        ['lua']: ["./dist/output/lua"],
-        ['cs']: ["./dist/output/cs"],
+        ['Json']: ["./dist/output/json"],
+        ['Lua']: ["./dist/output/lua"],
+        ['C#']: ["./dist/output/cs"],
     }
 }
 
-var configPath = path.join(process.cwd(), "./config.json");
+const args = process.argv.slice(2)
+var configPath;
+if (args.length > 0) {
+    configPath = path.join(process.cwd(), "./" + args[0]);
+}
+else {
+    configPath = path.join(process.cwd(), "./config.json");
+}
+
+console.log("config path: " + configPath);
+
 var configs = null;
 if (!fs.existsSync(configPath)) {
     configs = defaultConfigs

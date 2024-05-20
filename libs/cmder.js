@@ -5,17 +5,27 @@ const inquirer = require('inquirer');
 
 var configs = null
 var xlsxList = null
-var exportType = null
+var exportTypes = []
 var exportOption = "Export all"
 
 function showExportType() {
     inquirer.prompt({
-        type: 'list',
-        name: 'type',
+        type: 'checkbox',
+        name: 'types',
         message: 'Please select the export type:',
-        choices: ['Lua', 'Json', 'CS'],
+        choices: [
+            { name: 'Json', value: 'Json', checked: exportTypes.indexOf("Json") != -1 },
+            { name: 'C#', value: 'C#', checked: exportTypes.indexOf("C#") != -1 },
+            { name: 'Lua', value: 'Lua', checked: exportTypes.indexOf("Lua") != -1 },
+        ],
+        validate(answer) {
+            if (answer.length < 1) {
+                return 'You must choose at least one type.';
+            }
+            return true;
+        },
     }).then((answers) => {
-        exportType = answers.type.toLowerCase()
+        exportTypes = answers.types
         showExportList();
     });
 }
@@ -23,9 +33,21 @@ function showExportType() {
 function showExportList() {
     xlsxList = reader.readXlsxFileList(configs.srcePath)
 
-    var choices = ["Refresh", "Export all"]
+    var choices = ["Settings", "Refresh", "Export all"]
     choices.push(new inquirer.Separator());
     choices = choices.concat(xlsxList)
+
+    function exportAll() {
+        xlsxList.forEach(xlsx => {
+            exportSheet(xlsx)
+        })
+    }
+
+    function exportSheet(name) {
+        exportTypes.forEach(type => {
+            exporters.exportSheets(type, path.join(configs.srcePath, name), configs.destPath[type]);
+        })
+    }
 
     inquirer
         .prompt([
@@ -41,14 +63,17 @@ function showExportList() {
         .then((answers) => {
             var option = answers.option;
             switch (option) {
+                case "Settings":
+                    showExportType();
+                    return;
                 case "Refresh":
                     xlsxList = reader.readXlsxFileList(configs.srcePath);
                     break;
                 case "Export all":
-                    exporters.exportAll(exportType, xlsxList, configs.srcePath, configs.destPath[exportType]);
+                    exportAll();
                     break;
                 default:
-                    exporters.exportSheets(exportType, path.join(configs.srcePath, option), configs.destPath[exportType]);
+                    exportSheet(option)
                     break;
             }
 

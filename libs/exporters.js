@@ -4,13 +4,13 @@ const log = require("./log")
 const reader = require("./reader");
 
 const EXPORT_TYPE = {
-  JSON: 'json',
-  LUA: 'lua',
-  CS: 'cs',
+  JSON: 'Json',
+  LUA: 'Lua',
+  CS: 'C#',
 };
 
 exporters = {
-  [EXPORT_TYPE.JSON]: require("./export-script"),
+  [EXPORT_TYPE.JSON]: require("./export-json"),
   [EXPORT_TYPE.LUA]: require("./export-script"),
   [EXPORT_TYPE.CS]: require("./export-cs"),
 };

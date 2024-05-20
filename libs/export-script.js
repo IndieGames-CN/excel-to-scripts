@@ -2,14 +2,14 @@ const log = require("./log");
 const parser = require("./parser");
 
 fmts = {
-    "json": {
+    "Json": {
         fileSuffix: '.json',
         fileHead: "",
         keyWrap: { left: "\"", right: "\"" },
         arrayBrace: { left: "[", right: "]" },
         objectBrace: { left: "{", equal: ": ", right: "}" },
     },
-    "lua": {
+    "Lua": {
         fileSuffix: '.lua',
         fileHead: "return ",
         keyWrap: { left: "", right: "" },
@@ -48,6 +48,10 @@ function generate(sheet, type) {
         var columnLen = getColumLength(fields)
 
         var id = columns[0];
+        if (typeof id === 'string' && id.startsWith("#")) {
+            continue;
+        }
+
         if (keys.has(id)) {
             log.error("Duplicate ID: " + id + ", Row: " + i);
         }
@@ -164,7 +168,12 @@ function writeColumns(buffer, fmt, fields, columns) {
         if (i > 0) {
             buffer.push(", ");
         }
-        buffer.push("\"" + columns[i] + "\"")
+
+        var value = columns[i];
+        if (typeof value === 'string') {
+            value = value.replace(/\n/g, "\\n");
+        }
+        buffer.push("\"" + value + "\"")
     }
 
     buffer.push(fmt.arrayBrace.right + ",\n");

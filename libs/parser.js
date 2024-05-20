@@ -1,3 +1,5 @@
+const log = require("./log");
+
 const FIELD_TYPES = {
   SKIP: -1,
   ERROR: 0,
@@ -24,6 +26,17 @@ const BASE_TYPE_DICT = {
   "dynamic": FIELD_TYPES.DYNAMIC,
 };
 
+function isEmpty(field) {
+  var t = typeof (field)
+  if (t === 'undefined') {
+      return true;
+  } else if (t == "string") {
+      return !field.trim() || field.trim().length === 0
+  } else {
+      return false;
+  }
+}
+
 function getTypeSeparator(field) {
   switch (field.type) {
     case FIELD_TYPES.ARRAY:
@@ -31,6 +44,57 @@ function getTypeSeparator(field) {
       return "|";
     default:
       return ",";
+  }
+}
+
+function getColumLength(types) {
+  var length = 0;
+  for (var i = 0; i < types.length; i++) {
+    if (!isSkipType(types[i].type)) {
+      length = i + 1;
+    }
+  }
+  return length;
+}
+
+function processingData(fields, columns, idx) {
+  var field = fields[idx]
+
+  if (field.type == FIELD_TYPES.MULTI_LINE_ARRAY) {
+    var values = [];
+    var separator = getTypeSeparator(field.subType)
+
+    var first = columns[idx]
+    if (!isEmpty(first)) {
+      values.push(columns[idx]);
+      values.push(separator);
+    }
+
+    for (var i = idx + 1; i < columns.length; i++) {
+      var field = fields[i]
+      if (field == null) {
+        break
+      }
+      var columnType = field.type
+      if (isSkipType(columnType)) {
+        var value = columns[i];
+        if (isEmpty(value)) {
+          continue;
+        }
+        values.push(value);
+        values.push(separator);
+      } else {
+        break;
+      }
+    }
+
+    if (values.length > 0) {
+      values.pop();
+    }
+
+    return values.join('');
+  } else {
+    return columns[idx];
   }
 }
 
@@ -92,6 +156,20 @@ const parseCollectionType = {
     }
   },
 };
+
+function parseFields(types, names) {
+  var fields = [];
+  for (var i = 0; i < types.length; i++) {
+    var field = parseType(types[i]);
+
+    if (field.type == FIELD_TYPES.ERROR) {
+      log.error("Field type error, name: " + names[i])
+    }
+
+    fields.push(field);
+  }
+  return fields
+}
 
 function parseType(t) {
   if (t == undefined || typeof (t) != 'string' || t.startsWith("#")) {
@@ -283,8 +361,13 @@ module.exports = Object.freeze({
   FIELD_TYPES: FIELD_TYPES,
   FIELD_TYPE_DICT: BASE_TYPE_DICT,
 
-  getTypeSeparator: getTypeSeparator,
+  isEmpty: isEmpty,
   isSkipType: isSkipType,
+  formatString: formatString,
+  getColumLength: getColumLength,
+  getTypeSeparator: getTypeSeparator,
+  processingData: processingData,
+  parseFields: parseFields,
   parseType: parseType,
   parseValue: parseValue,
   parseDefault: parseDefault,
