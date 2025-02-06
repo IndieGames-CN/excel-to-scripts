@@ -12,21 +12,33 @@ $ npm run pkgwin
 
 ## 运行
 
-启动 `excel-to-scripts` 执行文件，默认第一次运行会检测配置文件，如果没有则自动生成配置文件 `config.json`：
+启动 `excel-to-scripts` 执行文件，加载配置文件 `config/default.json`：
 
 ``` json
 {
-    "srcePath": "./data",
-    "destPath": "./output",
-    "destPath": {
-        "json": ["./outputs/json"],
-        "lua": ["./outputs/lua"],
-        "cs": ["./outputs/cs"]
+    "path": {
+        "xlsx": "./data",
+        "output": {
+            "json": ["./dist/output/json"],
+            "lua": ["./dist/output/lua"],
+            "cs": ["./dist/output/cs"]
+        }
+    },
+    "options": {
+        "namespace": "Game.Configs",
+        "baseClass": "ConfigBase",
+        "outputTypes": ["json", "cs", "lua"]
     }
 }
 ```
 
-其中 `srcePath` 为 Excel 文件目录，`destPath` 为数据导出目录。
+其中 `path.xlsx` 为 Excel 文件目录，`path.output` 为数据导出目录。
+
+其中 `options` 选项配置内容如下：
+
+- namespace，脚本命名空间。
+- baseClass，脚本数据基类。
+- outputTypes，输出文件类型列表。
 
 启动执行文件后，执行导出流程：
 

@@ -27,7 +27,7 @@ function generate(sheet) {
         if (typeof id === 'string' && id.startsWith("#")) {
             continue;
         }
-        
+
         if (keys.has(id)) {
             log.error("Duplicate ID: " + id + ", Row: " + i);
         }
@@ -69,12 +69,16 @@ function generate(sheet) {
     };
 }
 
-function generateConsts(sheet, type) {
+function generateConsts(sheet) {
     const buffer = []
 
     buffer.push(fmt.objectBrace.left + "\n");
     for (var i = 1; i < sheet.data.length; i++) {
         var data = sheet.data[i];
+
+        if (data.length <= 0) {
+            continue;
+        }
 
         var name = data[0];
         if (parser.isEmpty(name)) {
@@ -82,7 +86,6 @@ function generateConsts(sheet, type) {
         }
 
         if (data.length < 4) {
-            log.error("The number of columns must not be less than 4.")
             break;
         }
 
@@ -111,7 +114,12 @@ function generateConsts(sheet, type) {
     };
 }
 
+function generateEnums() {
+    return null;
+}
+
 module.exports = {
     generate: generate,
     generateConsts: generateConsts,
+    generateEnums: generateEnums,
 }

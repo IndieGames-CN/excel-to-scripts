@@ -2,38 +2,19 @@ const path = require("path");
 const reader = require('./reader');
 const exporters = require("./exporters")
 const inquirer = require('inquirer');
+const config = require("config");
 
-var configs = null
-var xlsxList = null
-var exportTypes = []
-var exportOption = "Export all"
+var xlsxList = null;
+var exportTypes = config.get("options.outputTypes");
+var exportOption = "Export all";
 
-function showExportType() {
-    inquirer.prompt({
-        type: 'checkbox',
-        name: 'types',
-        message: 'Please select the export type:',
-        choices: [
-            { name: 'Json', value: 'Json', checked: exportTypes.indexOf("Json") != -1 },
-            { name: 'C#', value: 'C#', checked: exportTypes.indexOf("C#") != -1 },
-            { name: 'Lua', value: 'Lua', checked: exportTypes.indexOf("Lua") != -1 },
-        ],
-        validate(answer) {
-            if (answer.length < 1) {
-                return 'You must choose at least one type.';
-            }
-            return true;
-        },
-    }).then((answers) => {
-        exportTypes = answers.types
-        showExportList();
-    });
-}
+var pathXlsx = config.get("path.xlsx");
+var pathOutput = config.get("path.output");
 
 function showExportList() {
-    xlsxList = reader.readXlsxFileList(configs.srcePath)
+    xlsxList = reader.readXlsxFileList(pathXlsx)
 
-    var choices = ["Settings", "Refresh", "Export all"]
+    var choices = ["Refresh", "Export all"]
     choices.push(new inquirer.Separator());
     choices = choices.concat(xlsxList)
 
@@ -45,7 +26,7 @@ function showExportList() {
 
     function exportSheet(name) {
         exportTypes.forEach(type => {
-            exporters.exportSheets(type, path.join(configs.srcePath, name), configs.destPath[type]);
+            exporters.exportSheets(type, path.join(pathXlsx, name), pathOutput[type]);
         })
     }
 
@@ -54,7 +35,7 @@ function showExportList() {
             {
                 type: 'rawlist',
                 name: 'option',
-                message: 'Select the export file:',
+                message: 'Select the export file (' + exportTypes + "):",
                 default: exportOption,
                 choices: choices,
                 pageSize: 30,
@@ -63,11 +44,8 @@ function showExportList() {
         .then((answers) => {
             var option = answers.option;
             switch (option) {
-                case "Settings":
-                    showExportType();
-                    return;
                 case "Refresh":
-                    xlsxList = reader.readXlsxFileList(configs.srcePath);
+                    xlsxList = reader.readXlsxFileList(pathXlsx);
                     break;
                 case "Export all":
                     exportAll();
@@ -82,10 +60,9 @@ function showExportList() {
         });
 }
 
-function start(cfgs) {
-    configs = cfgs
-    xlsxList = reader.readXlsxFileList(configs.srcePath)
-    showExportType();
+function start() {
+    xlsxList = reader.readXlsxFileList(pathXlsx)
+    showExportList();
 }
 
 module.exports = {

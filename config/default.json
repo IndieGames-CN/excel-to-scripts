@@ -1,0 +1,15 @@
+{
+    "path": {
+        "xlsx": "./data",
+        "output": {
+            "json": ["./dist/output/json"],
+            "lua": ["./dist/output/lua"],
+            "cs": ["./dist/output/cs"]
+        }
+    },
+    "options": {
+        "namespace": "Game.Configs",
+        "baseClass": "ConfigBase",
+        "outputTypes": ["json", "cs", "lua"]
+    }
+}

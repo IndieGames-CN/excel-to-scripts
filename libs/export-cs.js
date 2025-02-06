@@ -1,6 +1,10 @@
 const util = require('util');
 const log = require("./log");
 const parser = require('./parser');
+const config = require("config");
+
+const CLASS_NAMESPACE = config.get("options.namespace");
+const CLASS_BASECLASS = config.get("options.baseClass")
 
 const FIELD_TYPES = parser.FIELD_TYPES;
 
@@ -8,11 +12,19 @@ const CLASS_FIELD = "\t\tpublic %s %s { get; set; } \n";
 const CLASS_FIELD_DESC = "\t\tpublic %s %s { get; set; } // %s \n";
 const CLASS_STATIC_FIELd = "\t\tpublic static %s %s; // %s \n";
 
-const CLASS_STATIC = "\tpublic static class %s\n"
+function getNamespace() {
+    return CLASS_NAMESPACE === null ? "Configs" : CLASS_NAMESPACE;
+}
+
+function getBaseClass() {
+    return CLASS_BASECLASS === null ? "" : (" : " + CLASS_BASECLASS);
+}
+
+const CLASS_BASE = "\tpublic class %s\n"
     + "\t{\n"
     + "%s"
     + "\t}\n";
-const CLASS_DATA = "\tpublic class %s : Data\n"
+const CLASS_DATA = "\tpublic class %s" + getBaseClass() + "\n"
     + "\t{\n"
     + "%s"
     + "\t}\n";
@@ -21,11 +33,12 @@ const CLASS_ITEM = "\tpublic class %s\n"
     + "%s"
     + "\t}\n\n";
 const NAMESPACE_TEMPLATE = "%s"
-    + "using Game.Core.Data;\n\n"
-    + "namespace Game.Configs\n"
+    + "namespace " + getNamespace() + "\n"
     + "{\n"
     + "%s"
     + "}";
+const ENUM_TEMPLATE = "\tpublic enum %s\n\t{\n%s\t}"
+const FIELD_TEMPLATE = "\t\t%s = %s"
 
 const FILE_SUFFIX = ".cs"
 
@@ -98,7 +111,7 @@ function generateUsings(usings) {
     usings.forEach(function (value1, value2, set) {
         buffer.push(util.format("using %s;\n", value2))
     })
-    return buffer.join("")
+    return buffer.join("") + "\n";
 }
 
 function generate(sheet) {
@@ -150,7 +163,6 @@ function generateConsts(sheet) {
         var data = sheet.data[i];
 
         if (data.length < 4) {
-            log.error("The number of columns must not be less than 4.")
             break;
         }
 
@@ -172,12 +184,12 @@ function generateConsts(sheet) {
             usings.add(CS_LIBS.Collections);
         }
 
-        buffer.push(util.format(CLASS_STATIC_FIELd, type, name, desc))
+        buffer.push(util.format(CLASS_FIELD_DESC, type, name, desc))
     }
 
     var usingStr = generateUsings(usings);
     var itemStr = generateItems(items);
-    var sheetStr = util.format(CLASS_STATIC, sheet.name, buffer.join(''))
+    var sheetStr = util.format(CLASS_BASE, sheet.name, buffer.join(''))
 
     return {
         fileName: sheet.name + FILE_SUFFIX,
@@ -185,7 +197,38 @@ function generateConsts(sheet) {
     };
 }
 
+function generateEnums(sheet) {
+    const buffer = [];
+
+    for (var i = 1; i < sheet.data.length; i++) {
+        var data = sheet.data[i];
+        var name = data[0];
+        var value = data[1];
+
+        if (parser.isEmpty(value)) {
+            buffer.push("\t\t" + name);
+        } else {
+            buffer.push(util.format(FIELD_TEMPLATE, name, value));
+        }
+
+        if (i < sheet.data.length) {
+            buffer.push(",");
+        }
+
+        buffer.push("\n");
+    }
+
+    var enumName = sheet.name.substring(0, sheet.name.length - 4);
+    var enumStr = util.format(ENUM_TEMPLATE, enumName, buffer.join('')) + "\n";
+
+    return {
+        fileName: enumName + FILE_SUFFIX,
+        fileContent: util.format(NAMESPACE_TEMPLATE, "", enumStr)
+    }
+}
+
 module.exports = {
     generate: generate,
     generateConsts: generateConsts,
+    generateEnums: generateEnums,
 }

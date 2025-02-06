@@ -23,6 +23,7 @@
   "license": "ISC",
   "dependencies": {
     "cli-color": "^2.0.2",
+    "config": "^3.3.12",
     "inquirer": "^8.2.4",
     "node-xlsx": "^0.21.0",
     "pkg": "^5.7.0",

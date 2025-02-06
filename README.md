@@ -12,21 +12,27 @@ $ npm run pkgwin
 
 ## Usage
 
-Start the `excel-to-scripts` executable, which by default detects the configuration file on the first run and automatically generates the configuration file `config.json` if it does not exist.
+Start the 'excel-to-scripts' execution file and load the configuration file 'config/default.json':
 
 ``` json
 {
-    "srcePath": "./data",
-    "destPath": "./output",
-    "destPath": {
-        "json": ["./outputs/json"],
-        "lua": ["./outputs/lua"],
-        "cs": ["./outputs/cs"]
+    "path": {
+        "xlsx": "./data",
+        "output": {
+            "json": ["./dist/output/json"],
+            "lua": ["./dist/output/lua"],
+            "cs": ["./dist/output/cs"]
+        }
+    },
+    "options": {
+        "namespace": "Game.Configs",
+        "baseClass": "ConfigBase",
+        "outputTypes": ["json", "cs", "lua"]
     }
 }
 ```
 
-Where `srcePath` is the Excel file directory and `destPath` is the data export directory.
+Where `path.xlsx` is the Excel file directory and `path.output` is the data export directory.
 
 After launching the executable, perform the export process.
 

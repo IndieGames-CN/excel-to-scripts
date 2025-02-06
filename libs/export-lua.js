@@ -1,21 +1,12 @@
 const log = require("./log");
 const parser = require("./parser");
 
-fmts = {
-    "Json": {
-        fileSuffix: '.json',
-        fileHead: "",
-        keyWrap: { left: "\"", right: "\"" },
-        arrayBrace: { left: "[", right: "]" },
-        objectBrace: { left: "{", equal: ": ", right: "}" },
-    },
-    "Lua": {
-        fileSuffix: '.lua',
-        fileHead: "return ",
-        keyWrap: { left: "", right: "" },
-        arrayBrace: { left: "{", right: "}" },
-        objectBrace: { left: "{", equal: " = ", right: "}" },
-    },
+const fmt = {
+    fileSuffix: '.lua',
+    fileHead: "return ",
+    keyWrap: { left: "", right: "" },
+    arrayBrace: { left: "{", right: "}" },
+    objectBrace: { left: "{", equal: " = ", right: "}" },
 };
 
 function isEmpty(field) {
@@ -29,8 +20,7 @@ function isEmpty(field) {
     }
 }
 
-function generate(sheet, type) {
-    var fmt = fmts[type]
+function generate(sheet) {
     var descs = sheet.data[0];
     var names = sheet.data[1];
     var types = sheet.data[2];
@@ -179,8 +169,7 @@ function writeColumns(buffer, fmt, fields, columns) {
     buffer.push(fmt.arrayBrace.right + ",\n");
 }
 
-function generateConsts(sheet, type) {
-    var fmt = fmts[type]
+function generateConsts(sheet) {
     const buffer = []
 
     buffer.push(fmt.fileHead + fmt.objectBrace.left + "\n");
@@ -222,7 +211,37 @@ function generateConsts(sheet, type) {
     };
 }
 
+function generateEnums(sheet) {
+    const buffer = []
+
+    buffer.push(fmt.fileHead + fmt.objectBrace.left + "\n");
+    for (var i = 1; i < sheet.data.length; i++) {
+        var data = sheet.data[i];
+
+        var name = data[0];
+        if (isEmpty(name)) {
+            continue;
+        }
+
+        var value = data[1];
+        buffer.push("\t" + name.toUpperCase())
+        buffer.push(fmt.objectBrace.equal + (value === undefined ? i : value));
+        buffer.push(",\n");
+    }
+
+    if (buffer.length > 1) {
+        buffer.pop();
+    }
+    buffer.push("\n" + fmt.objectBrace.right);
+
+    return {
+        fileName: sheet.name.substring(0, sheet.name.length - 4) + fmt.fileSuffix,
+        fileContent: buffer.join(''),
+    };
+}
+
 module.exports = {
     generate: generate,
     generateConsts: generateConsts,
+    generateEnums: generateEnums,
 }
